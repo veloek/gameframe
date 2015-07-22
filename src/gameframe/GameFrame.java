@@ -6,6 +6,8 @@
 package gameframe;
 
 import gameframe.api.GFGame;
+import gameframe.wsc.GamesRequest;
+import gameframe.wsc.ListOfGamesResponse;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -36,11 +38,10 @@ public class GameFrame extends JFrame implements ActionListener {
 
         Dimension size = new Dimension(WIDTH, HEIGHT);
 
-        Response r = WebClient.get("http://vtek.no/listribute/api/app");
-        System.out.println(r.getContent());
-        
+        ListOfGamesResponse games = GamesRequest.getListOfGames();
 
-        game = loadGame(new URL("http://dev.vtek.no/GFSnake.jar"));
+        if (games.getGames().length > 0)
+            game = loadGame(new URL(games.getGames()[0].getUrl()));
 
         // TODO: Use joystick and button input instead of keyboard
         addKeyListener(new KeyAdapter() {
@@ -85,11 +86,9 @@ public class GameFrame extends JFrame implements ActionListener {
     private class GameView extends JPanel {
 
         private long now, time;
-        private int frameCount, fps;
 
         public GameView() {
             time = System.nanoTime();
-            frameCount = fps = 0;
         }
 
         @Override
