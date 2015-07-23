@@ -31,12 +31,17 @@ abstract public class GFGame implements GFInputListener {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    private void setDirection(Direction direction) {
         this.direction = direction;
     }
 
     public Dimension getSize() {
         return size;
+    }
+
+    @Override
+    public void onDirection(Direction direction) {
+        setDirection(direction);
     }
 
     abstract public void update(Graphics g);

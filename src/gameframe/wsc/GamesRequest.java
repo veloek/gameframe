@@ -22,7 +22,7 @@ public class GamesRequest {
 
     public static ListOfGamesResponse getListOfGames() throws Exception {
         Response r = WebClient.get(ENDPOINT);
-        System.out.println(r.getContentType());
+
         if (r.getResponseCode() / 100 == 2 &&
                 r.getContentType().contains("application/json")) {
 

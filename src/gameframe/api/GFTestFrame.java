@@ -35,7 +35,6 @@ public class GFTestFrame extends JFrame implements ActionListener {
     public static final int HEIGHT = 480;
 
     private GFGame game;
-    private int direction = -1;
     private boolean debug;
 
     public GFTestFrame(GFGame game, boolean debug) {
@@ -56,11 +55,11 @@ public class GFTestFrame extends JFrame implements ActionListener {
                     System.exit(0); // TODO: Cleaner exit
                 } else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN ||
                         code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
-                    setDirection(code);
+                    if (game != null) setDirection(code);
                 } else if (code == KeyEvent.VK_ENTER) {
-                    game.onAction();
+                    if (game != null) game.onAction();
                 } else if (code == KeyEvent.VK_SPACE) {
-                    game.onAlternate();
+                    if (game != null) game.onAlternate();
                 }
             }
 
@@ -127,25 +126,21 @@ public class GFTestFrame extends JFrame implements ActionListener {
     }
 
     private void setDirection(int keyCode) {
-        if (keyCode != direction) {
-            direction = keyCode;
-
-            switch (keyCode) {
-                case KeyEvent.VK_UP:
-                    game.setDirection(Direction.UP);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    game.setDirection(Direction.DOWN);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    game.setDirection(Direction.LEFT);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    game.setDirection(Direction.RIGHT);
-                    break;
-                default:
-                    game.setDirection(null);
-            }
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+                game.onDirection(Direction.UP);
+                break;
+            case KeyEvent.VK_DOWN:
+                game.onDirection(Direction.DOWN);
+                break;
+            case KeyEvent.VK_LEFT:
+                game.onDirection(Direction.LEFT);
+                break;
+            case KeyEvent.VK_RIGHT:
+                game.onDirection(Direction.RIGHT);
+                break;
+            default:
+                game.onDirection(null);
         }
     }
 }
