@@ -6,18 +6,14 @@
 package gameframe.api;
 
 import gameframe.Direction;
-import java.awt.BorderLayout;
+import gameframe.Timer;
+import gameframe.TimerListener;
+import gameframe.Window;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  * GFTestFrame
@@ -29,24 +25,28 @@ import javax.swing.Timer;
  *
  * @author Vegard Løkken <vegard@loekken.org>
  */
-public class GFTestFrame extends JFrame implements ActionListener {
+public class GFTestFrame implements TimerListener {
 
+    private final Window window;
+    private final Timer timer;
+    
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
 
-    private GFGame game;
+    private final GFGame game;
     private int direction = -1;
     private boolean debug;
 
+    private boolean takedown = false;
+    
     public GFTestFrame(GFGame game, boolean debug) {
-        super("GameFrame TestFrame");
-
         this.game = game;
         this.debug = debug;
-
-        Dimension size = new Dimension(WIDTH, HEIGHT);
-
-        addKeyListener(new KeyAdapter() {
+        
+        window = new Window("GameFrame test", WIDTH, HEIGHT);
+        
+        // TODO: Use joystick and button input instead of keyboard
+        window.getFocusedComponent().addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -56,76 +56,48 @@ public class GFTestFrame extends JFrame implements ActionListener {
                     System.exit(0); // TODO: Cleaner exit
                 } else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN ||
                         code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
-                    setDirection(code);
+                    if (game != null) setDirection(code);
                 } else if (code == KeyEvent.VK_ENTER) {
-                    game.onAction();
+                    if (game != null) game.onAction();
                 } else if (code == KeyEvent.VK_SPACE) {
-                    game.onAlternate();
+                    if (game != null) game.onAlternate();
                 }
             }
-
         });
 
-        JPanel panel = new GameView();
-        panel.setPreferredSize(size);
-
-        setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
-        pack();
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
-
-        new Timer(1000/60, this).start();
+        timer = new Timer(60);
+        timer.addListener(this);
+        timer.start();  // Does not return until timer.stop() is called
+        dispose(null);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        repaint();
-    }
+    public void update(float delta) {
+        Graphics2D g = window.getDrawGraphics();
 
-    private class GameView extends JPanel {
-
-        private long now, time;
-        private int frameCount, fps;
-
-        public GameView() {
-            time = System.nanoTime();
-            frameCount = fps = 0;
+        if(game != null) {
+            game.update(delta, g);
         }
 
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
-            game.update(g);
-
-            if (debug) {
-                now = System.nanoTime();
-                frameCount++;
-                if (now-time > 1000000000) {
-                    fps = frameCount;
-                    frameCount = 0;
-                    time = now;
-                }
-                drawDebug(g);
-            }
-        }
-
-        private void drawDebug(Graphics g) {
+        if(debug) {
             int fontSize = 8;
             int padding = 1;
-
+            
             g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
             g.setColor(Color.LIGHT_GRAY);
 
             String debugStr = "Control: arrow keys, " +
                     "Action: ENTER, Alternate: SPACE, FPS: ";
-            g.drawString(debugStr + fps, padding, fontSize+padding);
+            g.drawString(debugStr + timer.getFPS(), padding, fontSize+padding);
+        }
+        
+        window.render();
+        
+        if(takedown || window.isDisposed()) {
+            timer.stop();
         }
     }
-
+    
     private void setDirection(int keyCode) {
         if (keyCode != direction) {
             direction = keyCode;
@@ -147,5 +119,23 @@ public class GFTestFrame extends JFrame implements ActionListener {
                     game.setDirection(null);
             }
         }
+    }
+    
+    /**
+     * Safely exits the application.
+     * Pass in null for the error string if you just want to exit cleanly.
+     * 
+     * @param err The error message to be printed if needed.
+     */
+    private void dispose(String err) {
+        int errCode = 0;
+        if(err != null) {
+            errCode = 1;
+            System.err.println(err);
+        }
+        
+        window.dispose();
+        System.out.println("Exited successfully.");
+        System.exit(errCode);
     }
 }

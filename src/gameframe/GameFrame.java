@@ -6,44 +6,42 @@
 package gameframe;
 
 import gameframe.api.GFGame;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  *
  * @author vegard
  */
-public class GameFrame extends JFrame implements ActionListener {
+public class GameFrame implements TimerListener {
+    
+    private final Window window;
+    
+    private final Timer timer;
+    
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
 
     private GFGame game;
     private int direction = -1;
 
+    private boolean takedown = false;
+    
     public GameFrame() throws Exception {
-        super("GameFrame");
-
-        Dimension size = new Dimension(WIDTH, HEIGHT);
-
+        
+        window = new Window("GameFrame", WIDTH, HEIGHT);
+        
         Response r = WebClient.get("http://vtek.no/listribute/api/app");
         System.out.println(r.getContent());
         
-
         game = loadGame(new URL("http://dev.vtek.no/GFSnake.jar"));
 
         // TODO: Use joystick and button input instead of keyboard
-        addKeyListener(new KeyAdapter() {
+        window.getFocusedComponent().addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -62,41 +60,25 @@ public class GameFrame extends JFrame implements ActionListener {
             }
 
         });
-
-        JPanel panel = new GameView();
-        panel.setPreferredSize(size);
-
-        setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
-        pack();
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
-
-        new Timer(1000/60, this).start();
+        
+        timer = new Timer(60);
+        timer.addListener(this);
+        timer.start();  // Does not return until timer.stop() is called
+        dispose(null);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        repaint();
-    }
+    public void update(float delta) {
+        Graphics2D g = window.getDrawGraphics();
 
-    private class GameView extends JPanel {
-
-        private long now, time;
-        private int frameCount, fps;
-
-        public GameView() {
-            time = System.nanoTime();
-            frameCount = fps = 0;
+        if(game != null) {
+            game.update(delta, g);
         }
 
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
-            if (game != null) game.update(g);
+        window.render();
+        
+        if(takedown || window.isDisposed()) {
+            timer.stop();
         }
     }
 
@@ -164,6 +146,26 @@ public class GameFrame extends JFrame implements ActionListener {
         return instance;
     }
 
+    /**
+     * Safely exits the application.
+     * Pass in null for the error string if you just want to exit cleanly.
+     * 
+     * @param err The error message to be printed if needed.
+     */
+    private void dispose(String err) {
+        timer.stop();
+        
+        int errCode = 0;
+        if(err != null) {
+            errCode = 1;
+            System.err.println(err);
+        }
+        
+        window.dispose();
+        System.out.println("Exited successfully.");
+        System.exit(errCode);
+    }
+    
     public static void main(String[] args) throws Exception {
         new GameFrame();
     }

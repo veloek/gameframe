@@ -39,6 +39,6 @@ abstract public class GFGame implements GFInputListener {
         return size;
     }
 
-    abstract public void update(Graphics g);
+    abstract public void update(float delta, Graphics g);
 
 }
