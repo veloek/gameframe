@@ -6,6 +6,8 @@
 package gameframe;
 
 import gameframe.api.GFGame;
+import gameframe.gui.MainMenu;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
@@ -25,20 +27,23 @@ public class GameFrame implements TimerListener {
     
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
+    public static String VERSION = "v0.0.1";
 
-    private GFGame game;
-    private int direction = -1;
+    private static GFGame game;
+    private static MainMenu menu;
 
     private boolean takedown = false;
     
     public GameFrame() throws Exception {
-        
         window = new Window("GameFrame", WIDTH, HEIGHT);
         
         Response r = WebClient.get("http://vtek.no/listribute/api/app");
         System.out.println(r.getContent());
         
         game = loadGame(new URL("http://dev.vtek.no/GFSnake.jar"));
+
+        menu = new MainMenu(size);
+        startGame(menu);
 
         // TODO: Use joystick and button input instead of keyboard
         window.getFocusedComponent().addKeyListener(new KeyAdapter() {
@@ -48,7 +53,7 @@ public class GameFrame implements TimerListener {
                 int code = e.getKeyCode();
 
                 if (code == KeyEvent.VK_ESCAPE) {
-                    System.exit(0); // TODO: Cleaner exit
+                    startGame(menu);
                 } else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN ||
                         code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
                     if (game != null) setDirection(code);
@@ -83,27 +88,29 @@ public class GameFrame implements TimerListener {
     }
 
     private void setDirection(int keyCode) {
-        if (keyCode != direction) {
-            direction = keyCode;
-
-            switch (keyCode) {
-                case KeyEvent.VK_UP:
-                    game.setDirection(Direction.UP);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    game.setDirection(Direction.DOWN);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    game.setDirection(Direction.LEFT);
-                    break;
-               case KeyEvent.VK_RIGHT:
-                    game.setDirection(Direction.RIGHT);
-                    break;
-            }
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+                game.onDirection(Direction.UP);
+                break;
+            case KeyEvent.VK_DOWN:
+                game.onDirection(Direction.DOWN);
+                break;
+            case KeyEvent.VK_LEFT:
+                game.onDirection(Direction.LEFT);
+                break;
+           case KeyEvent.VK_RIGHT:
+                game.onDirection(Direction.RIGHT);
+                break;
         }
     }
 
-    private GFGame loadGame(URL url) {
+    public static void startGame(GFGame game) {
+        if (game != null) {
+            GameFrame.game = game;
+        }
+    }
+
+    public static GFGame loadGame(URL url) {
         boolean isGFGame = false;
         Class gameClass = null;
         GFGame instance = null;

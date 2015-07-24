@@ -31,7 +31,7 @@ abstract public class GFGame implements GFInputListener {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    private void setDirection(Direction direction) {
         this.direction = direction;
     }
 
@@ -40,5 +40,10 @@ abstract public class GFGame implements GFInputListener {
     }
 
     abstract public void update(float delta, Graphics g);
+    
+    @Override
+    public void onDirection(Direction direction) {
+        setDirection(direction);
+    }
 
 }

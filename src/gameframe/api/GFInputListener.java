@@ -5,14 +5,17 @@
  */
 package gameframe.api;
 
+import gameframe.Direction;
+
 /**
  * GFInputListener
  *
- * Interface for Game Frame buttons; action and alternate
+ * Interface for Game Frame input; joystick, action and alternate
  *
  * @author Vegard Løkken <vegard@loekken.org>
  */
 public interface GFInputListener {
+    void onDirection(Direction direction);
     void onAction();
     void onAlternate();
 }

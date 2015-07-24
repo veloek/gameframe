@@ -33,8 +33,8 @@ public class GFTestFrame implements TimerListener {
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
 
-    private final GFGame game;
-    private int direction = -1;
+    private GFGame game;
+    
     private boolean debug;
 
     private boolean takedown = false;
@@ -99,25 +99,21 @@ public class GFTestFrame implements TimerListener {
     }
     
     private void setDirection(int keyCode) {
-        if (keyCode != direction) {
-            direction = keyCode;
-
-            switch (keyCode) {
-                case KeyEvent.VK_UP:
-                    game.setDirection(Direction.UP);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    game.setDirection(Direction.DOWN);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    game.setDirection(Direction.LEFT);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    game.setDirection(Direction.RIGHT);
-                    break;
-                default:
-                    game.setDirection(null);
-            }
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+                game.onDirection(Direction.UP);
+                break;
+            case KeyEvent.VK_DOWN:
+                game.onDirection(Direction.DOWN);
+                break;
+            case KeyEvent.VK_LEFT:
+                game.onDirection(Direction.LEFT);
+                break;
+            case KeyEvent.VK_RIGHT:
+                game.onDirection(Direction.RIGHT);
+                break;
+            default:
+                game.onDirection(null);
         }
     }
     

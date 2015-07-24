@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gameframe;
+package gameframe.wsc;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,24 +32,20 @@ public class WebClient {
             int responseCode = conn.getResponseCode();
             String responseMessage = conn.getResponseMessage();
 
-            if (responseCode / 100 == 2) {
-                StringBuilder sb = new StringBuilder();
-                try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()))) {
-                    
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line).append("\n");
-                    }
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()))) {
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
                 }
-
-                String content = sb.toString();
-
-                response = new Response(content, contentType, responseCode,
-                        responseMessage);
-            } else {
-                throw new Exception("Invalid response");
             }
+
+            String content = sb.toString();
+
+            response = new Response(content, contentType, responseCode,
+                    responseMessage);
 
         } else {
             throw new IllegalArgumentException(
