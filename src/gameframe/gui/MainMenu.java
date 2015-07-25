@@ -63,7 +63,7 @@ public class MainMenu extends GFGame {
     }
 
     @Override
-    public void update(Graphics g) {
+    public void update(float delta, Graphics g) {
 
         // Draw frame
         int marginTop = drawFrame(g);

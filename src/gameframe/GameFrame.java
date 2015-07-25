@@ -7,7 +7,6 @@ package gameframe;
 
 import gameframe.api.GFGame;
 import gameframe.gui.MainMenu;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
@@ -36,13 +35,8 @@ public class GameFrame implements TimerListener {
     
     public GameFrame() throws Exception {
         window = new Window("GameFrame", WIDTH, HEIGHT);
-        
-        Response r = WebClient.get("http://vtek.no/listribute/api/app");
-        System.out.println(r.getContent());
-        
-        game = loadGame(new URL("http://dev.vtek.no/GFSnake.jar"));
 
-        menu = new MainMenu(size);
+        menu = new MainMenu(new Dimension(WIDTH, HEIGHT));
         startGame(menu);
 
         // TODO: Use joystick and button input instead of keyboard
