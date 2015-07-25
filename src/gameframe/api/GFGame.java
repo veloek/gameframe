@@ -7,6 +7,7 @@
 package gameframe.api;
 
 import gameframe.Direction;
+import gameframe.HighscoreRank;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
@@ -37,6 +38,10 @@ abstract public class GFGame implements GFInputListener {
 
     public Dimension getSize() {
         return size;
+    }
+
+    protected HighscoreRank gameOver(int score) {
+        return new HighscoreRank(score, 1, true);
     }
 
     abstract public void update(float delta, Graphics g);
