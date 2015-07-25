@@ -39,7 +39,7 @@ public class GameFrame implements TimerListener {
 
     private boolean takedown = false;
     
-    public GameFrame() throws Exception {
+    public GameFrame() {
         window = new Window("GameFrame", WIDTH, HEIGHT);
 
         menu = new MainMenu(new Dimension(WIDTH, HEIGHT));
@@ -173,7 +173,7 @@ public class GameFrame implements TimerListener {
         System.exit(errCode);
     }
     
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new GameFrame();
     }
 
