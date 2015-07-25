@@ -17,8 +17,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 /**
+ * Window
  *
- * @author Hallgeir
+ * @author Hallgeir Løkken <istarnion@gmail.com>
  */
 public class Window {
 

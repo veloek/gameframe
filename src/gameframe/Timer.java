@@ -3,8 +3,9 @@ package gameframe;
 import java.util.ArrayList;
 
 /**
+ * Timer
  *
- * @author Hallgeir
+ * @author Hallgeir Løkken <istarnion@gmail.com>
  */
 public class Timer {
     

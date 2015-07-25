@@ -15,8 +15,14 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 
 /**
+ * GameFrame
  *
- * @author vegard
+ * Main class of the Game Frame project
+ *
+ * Loads the menu and sets up key listeners
+ *
+ * @author Vegard Løkken <vegard@loekken.org>
+ * @author Hallgeir Løkken <istarnion@gmail.com>
  */
 public class GameFrame implements TimerListener {
     

@@ -24,6 +24,7 @@ import java.awt.event.KeyEvent;
  * JFrame running. Optional debug information.
  *
  * @author Vegard Løkken <vegard@loekken.org>
+ * @author Hallgeir Løkken <istarnion@gmail.com>
  */
 public class GFTestFrame implements TimerListener {
 
