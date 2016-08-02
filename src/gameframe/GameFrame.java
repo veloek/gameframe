@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.security.Policy;
 
 /**
  * GameFrame
@@ -116,9 +117,9 @@ public class GameFrame implements TimerListener {
         GFGame instance = null;
 
         try {
-            JarClassLoader jcl = new JarClassLoader(url);
-            String className = jcl.getMainClassName();
-            gameClass = jcl.loadClass(className);
+            GFClassLoader cl = new GFClassLoader(url);
+            String className = cl.getMainClassName();
+            gameClass = cl.loadClass(className);
             isGFGame = GFGame.class.isAssignableFrom(gameClass);
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -174,6 +175,12 @@ public class GameFrame implements TimerListener {
     }
     
     public static void main(String[] args) {
+
+        // Sandboxing
+        Policy.setPolicy(new SandboxSecurityPolicy());
+        System.setSecurityManager(new SecurityManager());
+
+        // Start Game Frame
         new GameFrame();
     }
 
