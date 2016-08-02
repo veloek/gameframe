@@ -33,7 +33,7 @@ public class GameFrame implements TimerListener {
     
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
-    public static String VERSION = "v0.0.1";
+    public static final String VERSION = "v0.0.1";
 
     private static GFGame game;
     private static MainMenu menu;
@@ -44,7 +44,7 @@ public class GameFrame implements TimerListener {
         window = new Window("GameFrame", WIDTH, HEIGHT);
 
         menu = new MainMenu(new Dimension(WIDTH, HEIGHT));
-        startGame(menu);
+        mainMenu();
 
         // TODO: Use joystick and button input instead of keyboard
         window.getFocusedComponent().addKeyListener(new KeyAdapter() {
@@ -54,7 +54,7 @@ public class GameFrame implements TimerListener {
                 int code = e.getKeyCode();
 
                 if (code == KeyEvent.VK_ESCAPE) {
-                    startGame(menu);
+                    mainMenu();
                 } else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN ||
                         code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
                     if (game != null) setDirection(code);
@@ -109,6 +109,10 @@ public class GameFrame implements TimerListener {
         if (game != null) {
             GameFrame.game = game;
         }
+    }
+
+    public static void mainMenu() {
+        startGame(menu);
     }
 
     public static GFGame loadGame(URL url) {
