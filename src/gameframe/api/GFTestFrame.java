@@ -30,22 +30,22 @@ public class GFTestFrame implements TimerListener {
 
     private final Window window;
     private final Timer timer;
-    
+
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
 
     private GFGame game;
-    
+
     private boolean debug;
 
     private boolean takedown = false;
-    
+
     public GFTestFrame(GFGame game, boolean debug) {
         this.game = game;
         this.debug = debug;
-        
+
         window = new Window("GameFrame test", WIDTH, HEIGHT);
-        
+
         // TODO: Use joystick and button input instead of keyboard
         window.getFocusedComponent().addKeyListener(new KeyAdapter() {
 
@@ -62,6 +62,16 @@ public class GFTestFrame implements TimerListener {
                     if (game != null) game.onAction();
                 } else if (code == KeyEvent.VK_SPACE) {
                     if (game != null) game.onAlternate();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int code = e.getKeyCode();
+
+                if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN ||
+                        code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
+                    if (game != null) setDirection(-1);
                 }
             }
         });
@@ -83,7 +93,7 @@ public class GFTestFrame implements TimerListener {
         if(debug) {
             int fontSize = 8;
             int padding = 1;
-            
+
             g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
             g.setColor(Color.LIGHT_GRAY);
 
@@ -91,14 +101,14 @@ public class GFTestFrame implements TimerListener {
                     "Action: ENTER, Alternate: SPACE, FPS: ";
             g.drawString(debugStr + timer.getFPS(), padding, fontSize+padding);
         }
-        
+
         window.render();
-        
+
         if(takedown || window.isDisposed()) {
             timer.stop();
         }
     }
-    
+
     private void setDirection(int keyCode) {
         switch (keyCode) {
             case KeyEvent.VK_UP:
@@ -117,11 +127,11 @@ public class GFTestFrame implements TimerListener {
                 game.onDirection(null);
         }
     }
-    
+
     /**
      * Safely exits the application.
      * Pass in null for the error string if you just want to exit cleanly.
-     * 
+     *
      * @param err The error message to be printed if needed.
      */
     private void dispose(String err) {
@@ -130,7 +140,7 @@ public class GFTestFrame implements TimerListener {
             errCode = 1;
             System.err.println(err);
         }
-        
+
         window.dispose();
         System.out.println("Exited successfully.");
         System.exit(errCode);
